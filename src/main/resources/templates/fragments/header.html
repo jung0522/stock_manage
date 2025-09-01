@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 공통 메타 정보 프래그먼트 -->
+    <th:block th:fragment="common-meta">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<!-- 헤더 프래그먼트 -->
+<header th:fragment="header" class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <a href="/posts" class="text-2xl font-bold text-blue-600">goorm board</a>
+    </div>
+</header>
+
+</body>
+</html>
