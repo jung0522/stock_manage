@@ -34,4 +34,3 @@ public class Post {
     @Column(updatable = false)  // 수정 불가
     private LocalDateTime createdAt;  // 작성일시
 }
-

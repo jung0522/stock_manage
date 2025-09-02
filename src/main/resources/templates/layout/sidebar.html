@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title layout:title-pattern="$LAYOUT_TITLE - Goorm Dashboard">Goorm Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen bg-gray-50 text-gray-800">
+
+<!-- SIDEBAR -->
+<aside class="w-64 bg-white shadow h-screen sticky top-0">
+    <div class="p-6">
+        <h1 class="text-2xl font-bold text-blue-600 mb-6">Goorm Dashboard</h1>
+        <nav class="space-y-2">
+            <a th:href="@{/dashboard}" class="block px-4 py-2 rounded hover:bg-blue-100">대시보드</a>
+            <a th:href="@{/posts}" class="block px-4 py-2 rounded hover:bg-blue-100">게시판</a>
+            <a th:href="@{/settings}" class="block px-4 py-2 rounded hover:bg-blue-100">설정</a>
+        </nav>
+    </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="flex-1 p-6">
+    <div layout:fragment="content">
+        <!-- 페이지별 내용이 여기에 들어갑니다 -->
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-white shadow-inner mt-auto py-4">
+    <div class="text-center text-sm text-gray-500">
+        © 2025 Goorm Dashboard. All rights reserved.
+    </div>
+</footer>
+</body>
+</html>
