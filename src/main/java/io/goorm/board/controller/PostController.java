@@ -28,6 +28,7 @@ public class PostController {
     public String list(Model model) {
         List<Post> posts = postService.findAll();
         model.addAttribute("posts", posts);
+        model.addAttribute("layoutName", "sidebar");
         return "post/list";
     }
 
