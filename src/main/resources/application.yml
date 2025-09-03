@@ -17,3 +17,9 @@ spring:
   # Thymeleaf ??
   thymeleaf:
     cache: false  # ??? ??? ?? ???? (Hot Reload)
+
+
+  messages:
+    basename: messages/ValidationMessages
+    encoding: UTF-8
+
