@@ -1,6 +1,7 @@
 package io.goorm.board.service;
 
 import io.goorm.board.entity.Post;
+import io.goorm.board.exception.PostNotFoundException;
 import io.goorm.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class PostService {
     // SEQ로 게시글 조회
     public Post findBySeq(Long seq) {
         return postRepository.findById(seq)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. seq=" + seq));
+                .orElseThrow(() -> new PostNotFoundException(seq));
     }
 
     // 게시글 저장
