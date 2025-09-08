@@ -12,10 +12,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Locale;
@@ -101,13 +98,12 @@ public class AuthController {
 
     @GetMapping("/profile")
     public String profileForm(HttpSession session, Model model) {
+        // interceptor가 이미 로그인 여부 체크
         User user = (User) session.getAttribute("user");
-
 
         // 최신 사용자 정보 조회
         User currentUser = userService.findById(user.getId());
 
-        // 프로필 DTO 생성 및 기본값 설정
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();
         profileUpdateDto.setNickname(currentUser.getNickname());
 
@@ -127,7 +123,6 @@ public class AuthController {
 
         User user = (User) session.getAttribute("user");
 
-
         if (result.hasErrors()) {
             User currentUser = userService.findById(user.getId());
             model.addAttribute("currentUser", currentUser);
@@ -136,8 +131,6 @@ public class AuthController {
 
         try {
             User updatedUser = userService.updateProfile(user.getId(), profileUpdateDto);
-
-            // 세션의 사용자 정보 업데이트
             session.setAttribute("user", updatedUser);
 
             String message = messageSource.getMessage("flash.profile.updated", null, "프로필이 수정되었습니다.", locale);
