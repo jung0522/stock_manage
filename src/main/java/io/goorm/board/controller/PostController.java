@@ -46,11 +46,7 @@ public class PostController {
 
     // 게시글 작성 폼
     @GetMapping("/posts/new")
-    public String createForm(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return "redirect:/auth/login";
-        }
+    public String createForm(Model model) {
 
         model.addAttribute("post", new Post());
         return "post/form";
@@ -64,9 +60,7 @@ public class PostController {
                          RedirectAttributes redirectAttributes) {
 
         User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return "redirect:/auth/login";
-        }
+
 
         // 검증 오류가 있으면 폼으로 다시 이동
         if (bindingResult.hasErrors()) {
@@ -86,9 +80,6 @@ public class PostController {
     @GetMapping("/posts/{seq}/edit")
     public String editForm(@PathVariable Long seq, HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return "redirect:/auth/login";
-        }
 
         Post post = postService.findBySeq(seq);
 
@@ -110,9 +101,7 @@ public class PostController {
                          RedirectAttributes redirectAttributes) {
 
         User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return "redirect:/auth/login";
-        }
+
 
         // 기존 게시글 조회
         Post existingPost = postService.findBySeq(seq);
@@ -138,9 +127,7 @@ public class PostController {
     @PostMapping("/posts/{seq}/delete")
     public String delete(@PathVariable Long seq, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return "redirect:/auth/login";
-        }
+
 
         // 기존 게시글 조회
         Post existingPost = postService.findBySeq(seq);
