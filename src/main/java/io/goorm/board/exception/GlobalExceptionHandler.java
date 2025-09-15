@@ -1,25 +1,28 @@
 package io.goorm.board.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 전역 예외 처리기
  * 모든 컨트롤러에서 발생하는 예외를 한 곳에서 처리
  */
 @ControllerAdvice
+@Slf4j
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
-    @Autowired
-    private MessageSource messageSource;
+    
+    private final MessageSource messageSource;
 
     /**
      * PostNotFoundException 처리
@@ -27,13 +30,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(PostNotFoundException.class)
     public String handlePostNotFoundException(PostNotFoundException e, Model model) {
-        logger.warn("Post not found: {}", e.getMessage());
+        log.warn("Post not found: {}", e.getMessage());
 
         // 국제화 메시지 조회
         String errorMessage = messageSource.getMessage(
-                "error.post.notfound",
-                null,
-                LocaleContextHolder.getLocale()
+            "error.post.notfound",
+            null,
+            "Default message",
+            LocaleContextHolder.getLocale()
         );
 
         model.addAttribute("error", errorMessage);
@@ -48,14 +52,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DuplicateEmailException.class)
     public String handleDuplicateEmailException(DuplicateEmailException e, Model model) {
-        logger.warn("Duplicate email: {}", e.getMessage());
+        log.warn("Duplicate email: {}", e.getMessage());
 
         // 국제화 메시지 조회
         String errorMessage = messageSource.getMessage(
-                "error.email.duplicate",
-                null,
-                "이미 사용 중인 이메일입니다.",
-                LocaleContextHolder.getLocale()
+            "error.email.duplicate",
+            null,
+            "Default message",
+            LocaleContextHolder.getLocale()
         );
 
         model.addAttribute("error", errorMessage);
@@ -70,14 +74,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(InvalidCredentialsException.class)
     public String handleInvalidCredentialsException(InvalidCredentialsException e, Model model) {
-        logger.warn("Invalid credentials: {}", e.getMessage());
+        log.warn("Invalid credentials: {}", e.getMessage());
 
         // 국제화 메시지 조회
         String errorMessage = messageSource.getMessage(
-                "error.login.invalid",
-                null,
-                "이메일 또는 비밀번호가 올바르지 않습니다.",
-                LocaleContextHolder.getLocale()
+            "error.login.invalid",
+            null,
+            "Default message",
+            LocaleContextHolder.getLocale()
         );
 
         model.addAttribute("error", errorMessage);
@@ -92,14 +96,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UserNotFoundException.class)
     public String handleUserNotFoundException(UserNotFoundException e, Model model) {
-        logger.warn("User not found: {}", e.getMessage());
+        log.warn("User not found: {}", e.getMessage());
 
         // 국제화 메시지 조회
         String errorMessage = messageSource.getMessage(
-                "error.user.notfound",
-                null,
-                "사용자를 찾을 수 없습니다.",
-                LocaleContextHolder.getLocale()
+            "error.user.notfound",
+            null,
+            "Default message",
+            LocaleContextHolder.getLocale()
         );
 
         model.addAttribute("error", errorMessage);
@@ -111,21 +115,38 @@ public class GlobalExceptionHandler {
      * AccessDeniedException 처리
      * 권한 없는 접근 시 게시글 상세 페이지로 리다이렉트
      */
-    @ExceptionHandler(AccessDeniedException.class)
-    public String handleAccessDeniedException(AccessDeniedException e, Model model) {
-        logger.warn("Access denied: {}", e.getMessage());
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public String handleSpringSecurityAccessDenied(org.springframework.security.access.AccessDeniedException e, Model model, HttpServletRequest request) {
+        log.warn("Access denied: {} - {}", request.getRequestURI(), e.getMessage());
 
         // 국제화 메시지 조회
         String errorMessage = messageSource.getMessage(
-                "error.post.access.denied",
-                null,
-                "본인이 작성한 글만 수정/삭제할 수 있습니다.",
-                LocaleContextHolder.getLocale()
+            "error.post.access.denied",
+            null,
+            "Default message",
+            LocaleContextHolder.getLocale()
         );
 
         model.addAttribute("error", errorMessage);
 
         return "error/403";
+    }
+    
+    /**
+     * AuthenticationException 처리
+     * 인증 필요한 요청 시 로그인 페이지로 리다이렉트
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public String handleAuthenticationException(AuthenticationException e, HttpServletRequest request) {
+        log.warn("Authentication required: {} - {}", request.getRequestURI(), e.getMessage());
+        
+        // 원래 요청 URL을 로그인 후 리다이렉트를 위해 저장
+        String redirectUrl = request.getRequestURI();
+        if (request.getQueryString() != null) {
+            redirectUrl += "?" + request.getQueryString();
+        }
+        
+        return "redirect:/auth/login?redirect=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8);
     }
 
     /**
@@ -134,23 +155,24 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public String handleGeneralException(Exception e, Model model) {
-        logger.error("Unexpected error occurred", e);
-
+        log.error("Unexpected error occurred", e);
+        
         // 국제화 메시지 조회
         String errorMessage = messageSource.getMessage(
-                "error.server.internal",
-                null,
-                LocaleContextHolder.getLocale()
+            "error.server.internal",
+            null,
+            "Default message",
+            LocaleContextHolder.getLocale()
         );
-
+        
         model.addAttribute("error", errorMessage);
-
+        
         // 개발 환경에서는 상세 에러 정보 표시
-        if (logger.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             model.addAttribute("exception", e.getClass().getSimpleName());
             model.addAttribute("message", e.getMessage());
         }
-
+        
         return "error/500";
     }
 }

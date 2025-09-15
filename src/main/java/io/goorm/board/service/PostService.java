@@ -1,50 +1,43 @@
 package io.goorm.board.service;
 
 import io.goorm.board.entity.Post;
-import io.goorm.board.exception.PostNotFoundException;
-import io.goorm.board.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service  // Spring Service Bean으로 등록
-@RequiredArgsConstructor  // Lombok: final 필드에 대한 생성자 자동 생성
-public class PostService {
+public interface PostService {
 
-    private final PostRepository postRepository;  // 의존성 주입
+    /**
+     * 전체 게시글 조회
+     */
+    List<Post> findAll();
 
-    // 전체 게시글 조회
-    public List<Post> findAll() {
-        return postRepository.findAll();
-    }
+    /**
+     * SEQ로 게시글 조회 (읽기 전용)
+     */
+    Post findBySeq(Long seq);
 
-    // SEQ로 게시글 조회
-    public Post findBySeq(Long seq) {
-        return postRepository.findById(seq)
-                .orElseThrow(() -> new PostNotFoundException(seq));
-    }
+    /**
+     * 수정용 게시글 조회 (권한 체크 포함)
+     */
+    Post findForEdit(Long seq);
 
-    // 게시글 저장
-    @Transactional  // 쓰기 작업은 별도 트랜잭션
-    public Post save(Post post) {
-        return postRepository.save(post);
-    }
+    /**
+     * 게시글 저장
+     */
+    void save(Post post);
 
-    // 게시글 수정
-    @Transactional
-    public Post update(Long seq, Post updatePost) {
-        Post post = findBySeq(seq);
-        post.setTitle(updatePost.getTitle());
-        post.setContent(updatePost.getContent());
-        // author는 수정하지 않음 (기존 작성자 유지)
-        return post;  // @Transactional에 의해 자동으로 UPDATE 쿼리 실행
-    }
+    /**
+     * 게시글 수정
+     */
+    void update(Long seq, Post updatePost);
 
-    // 게시글 삭제
-    @Transactional
-    public void delete(Long seq) {
-        postRepository.deleteById(seq);
-    }
+    /**
+     * 게시글 삭제
+     */
+    void delete(Long seq);
+
+    /**
+     * 게시글 소유자 확인
+     */
+    boolean isOwner(Long seq, String email);
 }
