@@ -22,9 +22,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/posts", "/auth/signup", "/auth/login").permitAll()
                 .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/favicon.*").permitAll()  // 정적 리소스 접근 허용
-                .requestMatchers("/posts/[0-9]+").permitAll()  // 숫자로 된 게시글 조회만 허용
-                .requestMatchers("/posts/new", "/posts/*/edit", "/posts/*/delete").authenticated()
-                .requestMatchers("/auth/profile").authenticated()
+                .requestMatchers("/posts/new", "/posts/*/edit", "/posts/*/delete").authenticated()  // 게시판 작성/수정/삭제는 로그인 필요
+                .requestMatchers("/posts/*").permitAll()  // 포스트 상세 조회는 모든 사용자 허용
+                .requestMatchers("/auth/profile").authenticated()  // 프로필 페이지는 로그인 필요
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
