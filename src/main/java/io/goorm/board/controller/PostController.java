@@ -42,9 +42,23 @@ public class PostController {
     // 게시글 상세 조회
     @GetMapping("/posts/{seq}")
     public String show(@PathVariable Long seq, Model model) {
-        Post post = postService.findBySeq(seq);
-        model.addAttribute("post", post);
-        return "post/show";
+        log.info("게시글 상세 조회 요청: seq={}", seq);
+        try {
+            Post post = postService.findBySeq(seq);
+            log.info("게시글 조회 성공: post={}", post);
+            if (post == null) {
+                log.warn("게시글을 찾을 수 없음: seq={}", seq);
+                model.addAttribute("error", "게시글을 찾을 수 없습니다.");
+                return "error/404";
+            }
+            model.addAttribute("post", post);
+            log.info("모델에 post 추가 완료, 템플릿 렌더링 시작");
+            return "post/show";
+        } catch (Exception e) {
+            log.error("게시글 조회 오류: seq={}, error={}", seq, e.getMessage(), e);
+            model.addAttribute("error", "게시글을 찾을 수 없습니다.");
+            return "error/404";
+        }
     }
 
     // 게시글 작성 폼
