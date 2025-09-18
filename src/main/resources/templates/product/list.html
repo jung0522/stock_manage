@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>상품 관리</title>
+</head>
+<body>
+    <div layout:fragment="content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 헤더 -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">상품 관리</h1>
+            <p class="mt-2 text-sm text-gray-600">상품을 등록하고 관리할 수 있습니다.</p>
+        </div>
+
+        <!-- 상품 테이블 -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            상품정보
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            카테고리
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            가격정보
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            상태
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            등록일
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            관리
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr th:if="${products.empty}" class="hover:bg-gray-50">
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">등록된 상품이 없습니다.</td>
+                    </tr>
+                    <tr th:each="product : ${products.content}" class="hover:bg-gray-50">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-12 w-12">
+                                    <div th:if="${product.imageUrl != null and product.imageUrl != ''}" class="h-12 w-12 rounded-lg overflow-hidden">
+                                        <img th:src="${product.imageUrl}" th:alt="${product.name}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div th:unless="${product.imageUrl != null and product.imageUrl != ''}" class="h-12 w-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                                        <span class="text-gray-400 text-xs">이미지</span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900" th:text="${product.name}">상품명</div>
+                                    <div class="text-sm text-gray-500">코드: <span th:text="${product.code}">상품코드</span></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500" th:text="${product.categoryName ?: '-'}">
+                            카테고리
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900">판매: ₩<span th:text="${#numbers.formatDecimal(product.unitPrice, 0, 'COMMA', 0, 'POINT')}">0</span></div>
+                            <div class="text-sm text-gray-500">원가: ₩<span th:text="${#numbers.formatDecimal(product.unitCost, 0, 'COMMA', 0, 'POINT')}">0</span></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span th:class="|inline-flex px-2 py-1 text-xs font-semibold rounded-full ${product.status.name() == 'ACTIVE' ? 'bg-green-100 text-green-800' : (product.status.name() == 'INACTIVE' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800')}|"
+                                  th:text="${product.status.getDisplayName()}">
+                                상태
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500" th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd')}">
+                            등록일
+                        </td>
+                        <td class="px-6 py-4 text-sm font-medium">
+                            <div class="flex space-x-2">
+                                <a th:href="@{/products/{id}(id=${product.productSeq})}" class="text-blue-600 hover:text-blue-900">상세</a>
+                                <a th:href="@{/products/{id}/edit(id=${product.productSeq})}" class="text-blue-600 hover:text-blue-900">수정</a>
+                                <form th:action="@{/products/{id}/delete(id=${product.productSeq})}" method="post" class="inline"
+                                      onsubmit="return confirm('정말 삭제하시겠습니까?')">
+                                    <button type="submit" class="text-red-600 hover:text-red-900">삭제</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 상품 등록 버튼 -->
+        <div class="mt-6">
+            <a th:href="@{/products/new}" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                + 상품 등록
+            </a>
+        </div>
+    </div>
+</body>
+</html>
