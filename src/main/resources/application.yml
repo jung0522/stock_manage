@@ -12,19 +12,9 @@ spring:
   thymeleaf:
     cache: false
 
-  # 공통 Flyway 설정
+  # Flyway 비활성화
   flyway:
-    locations: classpath:db/migration/maria
-    baseline-on-migrate: true
-    validate-on-migrate: false
-    repair-on-migrate: true
-    clean-disabled: false
-    clean-on-validation-error: true
-    ignore-missing-migrations: true
-    ignore-future-migrations: true
-    ignore-ignored-migrations: true
-    ignore-pending-migrations: true
-    out-of-order: true
+    enabled: false
 
 # 공통 로깅 설정
 logging:
