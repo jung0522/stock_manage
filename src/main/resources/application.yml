@@ -1,0 +1,44 @@
+spring:
+  profiles:
+    active: mybatis  # 기본 프로파일은 JPA 사용
+
+  # 공통 데이터소스 설정
+  datasource:
+    url: jdbc:mariadb://localhost:3307/task
+    username: task
+    password: 1234
+
+  # 공통 Thymeleaf 설정
+  thymeleaf:
+    cache: false
+
+  # 파일 업로드 설정
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+      file-size-threshold: 100MB
+
+  # Flyway 설정
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/maria
+    baseline-on-migrate: true
+
+# 애플리케이션 설정
+app:
+  upload:
+    root: /tmp/uploads
+
+# 공통 로깅 설정
+logging:
+  level:
+    org.springframework.security: DEBUG
+    io.goorm.board.service.UserService: DEBUG
+    io.goorm.board.controller.AuthController: DEBUG
+    org.springframework.security.authentication: TRACE
+    org.springframework.security.web: TRACE
+  charset:
+    console: UTF-8
+    file: UTF-8
