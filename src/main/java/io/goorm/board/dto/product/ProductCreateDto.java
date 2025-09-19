@@ -65,12 +65,31 @@ public class ProductCreateDto {
 
     // 파일 업로드용 필드
     private MultipartFile imageFile;
+    
+    // 수정 시 사용할 필드들 (등록 시에는 null)
+    private String currentImageUrl;
+    @Builder.Default
+    private Boolean deleteImage = false;
 
     /**
      * 이미지 파일 존재 여부
      */
     public boolean hasImageFile() {
         return imageFile != null && !imageFile.isEmpty();
+    }
+
+    /**
+     * 현재 이미지 존재 여부
+     */
+    public boolean hasCurrentImage() {
+        return currentImageUrl != null && !currentImageUrl.trim().isEmpty();
+    }
+
+    /**
+     * 이미지 삭제 요청 여부
+     */
+    public boolean isDeleteImageRequested() {
+        return deleteImage != null && deleteImage;
     }
 
     /**
@@ -81,5 +100,12 @@ public class ProductCreateDto {
             return false;
         }
         return unitPrice.compareTo(unitCost) >= 0;
+    }
+
+    /**
+     * 수정 모드 여부 확인 (ProductCreateDto는 항상 false)
+     */
+    public boolean isUpdateMode() {
+        return false;
     }
 }

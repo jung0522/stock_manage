@@ -67,6 +67,7 @@ public class ProductUpdateDto {
     private MultipartFile imageFile;
 
     // 이미지 삭제 여부
+    @Builder.Default
     private Boolean deleteImage = false;
 
     /**
@@ -98,5 +99,12 @@ public class ProductUpdateDto {
             return false;
         }
         return unitPrice.compareTo(unitCost) >= 0;
+    }
+
+    /**
+     * 수정 모드 여부 확인 (ProductUpdateDto는 항상 true)
+     */
+    public boolean isUpdateMode() {
+        return true;
     }
 }

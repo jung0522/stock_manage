@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${app.upload.root:/src/main/resources/static/uploads}")
+    @Value("${app.upload.root:src/main/resources/static/uploads}")
     private String uploadRoot;
 
     /**
@@ -20,9 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 업로드 파일 경로 매핑
+        // 업로드 파일 경로 매핑 - classpath를 사용하여 정적 리소스로 처리
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadRoot + "/")
+                .addResourceLocations("classpath:/static/uploads/")
                 .setCachePeriod(3600); // 1시간 캐시
 
         // 기본 정적 리소스들 (필요시)

@@ -21,7 +21,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/posts", "/products", "/auth/signup", "/auth/login").permitAll()
-                .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/favicon.*").permitAll()  // 정적 리소스 접근 허용
+                .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/uploads/**", "/favicon.*").permitAll()  // 정적 리소스 접근 허용
                 .requestMatchers("/posts/new", "/posts/*/edit", "/posts/*/delete").authenticated()  // 게시판 작성/수정/삭제는 로그인 필요
                 .requestMatchers("/posts/*").permitAll()  // 포스트 상세 조회는 모든 사용자 허용
                 .requestMatchers("/products/new", "/products/*/edit", "/products/*/delete").authenticated()  // 상품 등록/수정/삭제는 로그인 필요

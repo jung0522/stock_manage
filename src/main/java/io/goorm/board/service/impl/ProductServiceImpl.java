@@ -9,6 +9,7 @@ import io.goorm.board.entity.Product;
 import io.goorm.board.entity.Supplier;
 import io.goorm.board.enums.ProductStatus;
 import io.goorm.board.mapper.ProductMapper;
+import io.goorm.board.service.FileUploadService;
 import io.goorm.board.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
+    private final FileUploadService fileUploadService;
 
     @Override
     @Transactional
@@ -54,10 +56,16 @@ public class ProductServiceImpl implements ProductService {
                 .status(createDto.getStatus())
                 .build();
         
-        // 이미지 파일 처리 (추후 구현)
+        // 이미지 파일 처리
         if (createDto.hasImageFile()) {
-            // TODO: 이미지 파일 업로드 처리
-            // product.setImageUrl(uploadImage(createDto.getImageFile()));
+            try {
+                String imageUrl = fileUploadService.uploadImage(createDto.getImageFile());
+                product.setImageUrl(imageUrl);
+                log.info("상품 이미지 업로드 성공: {}", imageUrl);
+            } catch (Exception e) {
+                log.error("상품 이미지 업로드 실패: {}", e.getMessage(), e);
+                throw new RuntimeException("이미지 업로드 중 오류가 발생했습니다.", e);
+            }
         }
         
         // 상품 저장
@@ -93,10 +101,32 @@ public class ProductServiceImpl implements ProductService {
         
         // 이미지 처리
         if (updateDto.isDeleteImageRequested()) {
+            // 기존 이미지 파일 삭제
+            if (existingProduct.getImageUrl() != null) {
+                try {
+                    fileUploadService.deleteFile(existingProduct.getImageUrl());
+                    log.info("기존 이미지 파일 삭제 성공: {}", existingProduct.getImageUrl());
+                } catch (Exception e) {
+                    log.warn("기존 이미지 파일 삭제 실패: {}", e.getMessage());
+                }
+            }
             existingProduct.setImageUrl(null);
         } else if (updateDto.hasImageFile()) {
-            // TODO: 이미지 파일 업로드 처리
-            // existingProduct.setImageUrl(uploadImage(updateDto.getImageFile()));
+            try {
+                // 기존 이미지 파일 삭제
+                if (existingProduct.getImageUrl() != null) {
+                    fileUploadService.deleteFile(existingProduct.getImageUrl());
+                    log.info("기존 이미지 파일 삭제 성공: {}", existingProduct.getImageUrl());
+                }
+                
+                // 새 이미지 파일 업로드
+                String imageUrl = fileUploadService.uploadImage(updateDto.getImageFile());
+                existingProduct.setImageUrl(imageUrl);
+                log.info("새 이미지 업로드 성공: {}", imageUrl);
+            } catch (Exception e) {
+                log.error("이미지 업로드 실패: {}", e.getMessage(), e);
+                throw new RuntimeException("이미지 업로드 중 오류가 발생했습니다.", e);
+            }
         }
         
         // 상품 업데이트
@@ -114,6 +144,16 @@ public class ProductServiceImpl implements ProductService {
         // 상품 존재 확인
         Product product = productMapper.findById(productSeq)
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다: " + productSeq));
+        
+        // 이미지 파일 삭제
+        if (product.getImageUrl() != null) {
+            try {
+                fileUploadService.deleteFile(product.getImageUrl());
+                log.info("상품 이미지 파일 삭제 성공: {}", product.getImageUrl());
+            } catch (Exception e) {
+                log.warn("상품 이미지 파일 삭제 실패: {}", e.getMessage());
+            }
+        }
         
         // 상품 삭제
         productMapper.delete(productSeq);
