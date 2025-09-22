@@ -234,7 +234,7 @@ public class CategoryController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
-        return "redirect:/categories";
+        return "redirect:/admin/categories";
     }
 
 
