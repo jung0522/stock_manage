@@ -1,7 +1,9 @@
 package io.goorm.board.dto;
 
+import io.goorm.board.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,4 +26,7 @@ public class SignupDto {
     @NotBlank(message = "{validation.nickname.required}")
     @Size(min = 2, max = 20, message = "{validation.nickname.size}")
     private String nickname;
+    
+    @NotNull(message = "{validation.role.required}")
+    private UserRole role;
 }

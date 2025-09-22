@@ -52,6 +52,7 @@ public class UserService implements UserDetailsService {
         log.debug("비밀번호 암호화 완료: email={}, encodedLength={}", signupDto.getEmail(), encodedPassword.length());
         user.setPassword(encodedPassword); // BCrypt 암호화
         user.setNickname(signupDto.getNickname());
+        user.setRole(signupDto.getRole()); // 선택된 역할 설정
         
         User savedUser = userRepository.save(user);
         log.info("회원가입 성공: email={}, userId={}", signupDto.getEmail(), savedUser.getUserSeq());
