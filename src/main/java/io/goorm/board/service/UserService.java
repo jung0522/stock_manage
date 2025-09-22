@@ -123,14 +123,14 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         log.debug("Spring Security loadUserByUsername 호출: email={}", email);
         
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailWithCompany(email)
                 .orElseThrow(() -> {
                     log.warn("Spring Security - 사용자 없음: email={}", email);
                     return new UsernameNotFoundException("User not found: " + email);
                 });
         
-        log.debug("Spring Security - 사용자 로드 성공: email={}, authorities={}", 
-                email, user.getAuthorities());
+        log.debug("Spring Security - 사용자 로드 성공: email={}, role={}, company={}, authorities={}", 
+                email, user.getRole(), user.getCompany() != null ? user.getCompany().getCompanyName() : "N/A", user.getAuthorities());
         return user;
     }
 }

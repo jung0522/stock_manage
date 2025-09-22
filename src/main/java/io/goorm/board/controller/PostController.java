@@ -27,11 +27,6 @@ public class PostController {
     private final MessageSource messageSource;
     private final LocaleResolver localeResolver;
 
-    // 메인 페이지 - 관리자 대시보드로 리다이렉트
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/admin/dashboard";
-    }
 
     // 게시글 목록 (기본)
     @GetMapping("/posts")
