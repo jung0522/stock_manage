@@ -229,7 +229,7 @@ public class ProductController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
-        return "redirect:/products";
+        return "redirect:/admin/products";
     }
 
     /**
