@@ -6,9 +6,17 @@
     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <a th:href="@{/}" class="text-2xl font-bold text-blue-600" th:text="#{main.title}">goorm board</a>
         <nav class="space-x-4 flex items-center">
-            <a th:href="@{/posts}" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium" th:text="#{nav.posts}">게시판</a>
-            <a th:href="@{/products}" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium" th:text="#{nav.products}">상품관리</a>
-            <a th:href="@{/categories}" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium" th:text="#{nav.categories}">카테고리관리</a>
+            <!-- 관리자 메뉴 -->
+            <div sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/posts}" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium" th:text="#{nav.posts}">게시판</a>
+                <a th:href="@{/admin/products}" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium" th:text="#{nav.products}">상품관리</a>
+                <a th:href="@{/admin/categories}" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium" th:text="#{nav.categories}">카테고리관리</a>
+            </div>
+            
+            <!-- 바이어 메뉴 -->
+            <div sec:authorize="hasRole('BUYER')">
+                <a th:href="@{/buyer/orders}" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium">발주관리</a>
+            </div>
 
             <!-- 로그인하지 않은 경우 -->
             <div sec:authorize="isAnonymous()" class="space-x-4">
@@ -19,7 +27,9 @@
             <!-- 로그인한 경우 -->
             <div sec:authorize="isAuthenticated()" class="flex items-center space-x-4">
                 <a th:href="@{/auth/profile}" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium" th:text="#{nav.profile}">프로필</a>
-                <span class="text-gray-700" sec:authentication="principal.nickname">사용자</span><span class="text-gray-700" th:text="#{nav.user.greeting}">님</span>
+                <span class="text-gray-700" sec:authentication="principal.nickname">사용자</span>
+                <span class="text-gray-700" sec:authentication="principal.role.displayName">역할</span>
+                <span class="text-gray-700" th:text="#{nav.user.greeting}">님</span>
                 <form th:action="@{/auth/logout}" method="post" class="inline">
                     <button type="submit" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium" th:text="#{nav.logout}">로그아웃</button>
                 </form>

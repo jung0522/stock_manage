@@ -1,5 +1,6 @@
 package io.goorm.board.entity;
 
+import io.goorm.board.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -49,6 +50,14 @@ public class User implements UserDetails {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
     
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private UserRole role = UserRole.BUYER;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_seq")
+    private Company company;
+    
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
     
@@ -66,7 +75,7 @@ public class User implements UserDetails {
     // UserDetails 구현
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority(role.getAuthority()));
     }
     
     @Override

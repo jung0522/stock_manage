@@ -1,5 +1,6 @@
 package io.goorm.board.config;
 
+import io.goorm.board.security.CustomAuthenticationSuccessHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    
+    public SecurityConfig(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
+    }
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -25,19 +32,16 @@ public class SecurityConfig {
                 .requestMatchers("/posts/[0-9]+").permitAll()  // 숫자로 된 게시글 조회만 허용
                 .requestMatchers("/posts/new", "/posts/*/edit", "/posts/*/delete").authenticated()
                 .requestMatchers("/auth/profile").authenticated()
+                .requestMatchers("/admin/**").hasRole("ADMIN")  // 관리자만 접근 가능
+                .requestMatchers("/buyer/**").hasRole("BUYER")  // 바이어만 접근 가능
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
                 .usernameParameter("email")  // email 파라미터를 username으로 사용
                 .passwordParameter("password")
-                .defaultSuccessUrl("/posts", true)  // true로 설정하여 강제 리다이렉트
+                .successHandler(customAuthenticationSuccessHandler)  // 커스텀 핸들러 사용
                 .failureUrl("/auth/login?error=true")
-                .successHandler((request, response, authentication) -> {
-                    log.info("로그인 성공: user={}, authorities={}", 
-                            authentication.getName(), authentication.getAuthorities());
-                    response.sendRedirect("/posts");
-                })
                 .permitAll()
             )
             .logout(logout -> logout
