@@ -101,7 +101,7 @@ public class ProductController {
             ProductDto savedProduct = productService.create(createDto);
             String message = messageSource.getMessage("product.message.create.success", null, localeResolver.resolveLocale(request));
             redirectAttributes.addFlashAttribute("successMessage", message);
-            return "redirect:/products/" + savedProduct.getProductSeq();
+            return "redirect:/admin/products/" + savedProduct.getProductSeq();
         } catch (Exception e) {
             log.error("상품 등록 실패", e);
             model.addAttribute("errorMessage", e.getMessage());
@@ -137,7 +137,7 @@ public class ProductController {
             ProductDto updatedProduct = productService.update(updateDto);
             String message = messageSource.getMessage("product.message.update.success", null, localeResolver.resolveLocale(request));
             redirectAttributes.addFlashAttribute("successMessage", message);
-            return "redirect:/products/" + updatedProduct.getProductSeq();
+            return "redirect:/admin/products/" + updatedProduct.getProductSeq();
         } catch (Exception e) {
             log.error("상품 수정 실패", e);
             model.addAttribute("errorMessage", e.getMessage());
@@ -164,7 +164,7 @@ public class ProductController {
         } catch (Exception e) {
             log.error("Failed to get product detail for seq: {}", productSeq, e);
             model.addAttribute("errorMessage", e.getMessage());
-            return "redirect:/products";
+            return "redirect:/admin/products";
         }
     }
 
@@ -206,7 +206,7 @@ public class ProductController {
         } catch (Exception e) {
             log.error("Failed to get product for edit form, seq: {}", productSeq, e);
             model.addAttribute("errorMessage", e.getMessage());
-            return "redirect:/products";
+            return "redirect:/admin/products";
         }
     }
 
