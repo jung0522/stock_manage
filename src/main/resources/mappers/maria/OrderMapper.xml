@@ -68,11 +68,11 @@
         <if test="searchDto.orderNumber != null and searchDto.orderNumber != ''">
             AND o.order_number LIKE CONCAT('%', #{searchDto.orderNumber}, '%')
         </if>
-        <if test="searchDto.status != null and searchDto.status != ''">
+        <if test="searchDto.status != null">
             AND o.status = #{searchDto.status}
         </if>
-        <if test="searchDto.deliveryStatus != null and searchDto.deliveryStatus != ''">
-            AND o.status = #{searchDto.deliveryStatus}
+        <if test="searchDto.deliveryStatus != null">
+            AND o.delivery_status = #{searchDto.deliveryStatus}
         </if>
         <if test="searchDto.startDate != null and searchDto.endDate != null">
             AND DATE(o.order_date) BETWEEN #{searchDto.startDate} AND #{searchDto.endDate}
@@ -103,11 +103,11 @@
             <if test="orderNumber != null and orderNumber != ''">
                 AND o.order_number LIKE CONCAT('%', #{orderNumber}, '%')
             </if>
-            <if test="status != null and status != ''">
+            <if test="status != null">
                 AND o.status = #{status}
             </if>
-            <if test="deliveryStatus != null and deliveryStatus != ''">
-                AND o.status = #{deliveryStatus}
+            <if test="deliveryStatus != null">
+                AND o.delivery_status = #{deliveryStatus}
             </if>
             <if test="startDate != null and endDate != null">
                 AND DATE(o.order_date) BETWEEN #{startDate} AND #{endDate}
@@ -143,11 +143,11 @@
         <if test="searchDto.orderNumber != null and searchDto.orderNumber != ''">
             AND o.order_number LIKE CONCAT('%', #{searchDto.orderNumber}, '%')
         </if>
-        <if test="searchDto.status != null and searchDto.status != ''">
+        <if test="searchDto.status != null">
             AND o.status = #{searchDto.status}
         </if>
-        <if test="searchDto.deliveryStatus != null and searchDto.deliveryStatus != ''">
-            AND o.status = #{searchDto.deliveryStatus}
+        <if test="searchDto.deliveryStatus != null">
+            AND o.delivery_status = #{searchDto.deliveryStatus}
         </if>
         <if test="searchDto.startDate != null and searchDto.endDate != null">
             AND DATE(o.order_date) BETWEEN #{searchDto.startDate} AND #{searchDto.endDate}
@@ -171,11 +171,11 @@
             <if test="orderNumber != null and orderNumber != ''">
                 AND o.order_number LIKE CONCAT('%', #{orderNumber}, '%')
             </if>
-            <if test="status != null and status != ''">
+            <if test="status != null">
                 AND o.status = #{status}
             </if>
-            <if test="deliveryStatus != null and deliveryStatus != ''">
-                AND o.status = #{deliveryStatus}
+            <if test="deliveryStatus != null">
+                AND o.delivery_status = #{deliveryStatus}
             </if>
             <if test="startDate != null and endDate != null">
                 AND DATE(o.order_date) BETWEEN #{startDate} AND #{endDate}
